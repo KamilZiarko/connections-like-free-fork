@@ -264,8 +264,8 @@
   }
 
   .cluster-item .bigbut {
-    min-width: 120px;
-    max-width: 180px;
+    min-width: 138px;
+    max-width: 207px;
   }
 
   .cluster-item.recent .bigbut {
@@ -296,11 +296,11 @@
     justify-content: center;
     gap: 2px;
     width: 100%;
-    min-width: 62px;
-    max-width: 80px;
-    height: 44px;
-    padding: 2px 3px;
-    font-size: 9px;
+    min-width: 71px;
+    max-width: 92px;
+    height: 51px;
+    padding: 2px 4px;
+    font-size: 10.5px;
     font-weight: 500;
     font-family: inherit;
     text-align: center;
@@ -567,17 +567,17 @@
 
   @media (max-width: 600px) {
     button.bigbut {
-      min-width: 52px;
-      max-width: 68px;
-      height: 38px;
-      font-size: 8px;
+      min-width: 60px;
+      max-width: 78px;
+      height: 44px;
+      font-size: 9px;
       padding: 2px 3px;
     }
 
     .cluster-item .bigbut {
-      min-width: 100px;
-      max-width: 140px;
-      height: 44px;
+      min-width: 115px;
+      max-width: 161px;
+      height: 51px;
     }
   }
 
@@ -641,35 +641,28 @@
     100% { transform: scale(1); box-shadow: 0 2px 4px var(--shadow); }
   }
 
-  /* Progress glow - warm and cozy */
-  button.bigbut.glow-mild {
-    border-color: rgba(196, 125, 92, 0.4);
-    background: linear-gradient(135deg, #FFFDF8 0%, #FEF9F2 100%);
+  /* Progress indicator - subtle bar at bottom using green (success) color */
+  button.bigbut.has-progress::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--success);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    transition: width 0.2s ease;
   }
 
-  button.bigbut.glow-medium {
-    border-color: rgba(196, 125, 92, 0.6);
-    box-shadow: 0 2px 6px var(--shadow), 0 0 10px rgba(196, 125, 92, 0.2);
-    background: linear-gradient(135deg, #FEF8F0 0%, #FDF4EA 100%);
-  }
-
-  button.bigbut.glow-strong {
-    border-color: rgba(196, 125, 92, 0.8);
-    box-shadow: 0 2px 6px var(--shadow), 0 0 14px rgba(196, 125, 92, 0.3);
-    background: linear-gradient(135deg, #FDF4E8 0%, #FCEEE0 100%);
-  }
-
-  button.bigbut.glow-intense {
-    border-color: var(--accent);
-    box-shadow: 0 2px 6px var(--shadow), 0 0 18px rgba(196, 125, 92, 0.4);
-    background: linear-gradient(135deg, #FCEFE0 0%, #FBEBD8 100%);
-    animation: glowPulse 2s ease-in-out infinite;
-  }
-
-  @keyframes glowPulse {
-    0%, 100% { box-shadow: 0 2px 6px var(--shadow), 0 0 14px rgba(196, 125, 92, 0.3); }
-    50% { box-shadow: 0 2px 6px var(--shadow), 0 0 22px rgba(196, 125, 92, 0.5); }
-  }
+  button.bigbut.progress-10::after { width: 10%; }
+  button.bigbut.progress-20::after { width: 20%; }
+  button.bigbut.progress-30::after { width: 30%; }
+  button.bigbut.progress-40::after { width: 40%; }
+  button.bigbut.progress-50::after { width: 50%; }
+  button.bigbut.progress-60::after { width: 60%; }
+  button.bigbut.progress-70::after { width: 70%; }
+  button.bigbut.progress-80::after { width: 80%; }
+  button.bigbut.progress-90::after { width: 90%; }
+  button.bigbut.progress-100::after { width: 100%; }
 </style>
 
 <body>
@@ -982,15 +975,16 @@
   function updateGlowClass(button) {
     const cluster = button.cluster || [];
     const len = cluster.length;
-    button.classList.remove("glow-mild", "glow-medium", "glow-strong", "glow-intense");
-    if (len >= 35) {
-      button.classList.add("glow-intense");
-    } else if (len >= 25) {
-      button.classList.add("glow-strong");
-    } else if (len >= 15) {
-      button.classList.add("glow-medium");
-    } else if (len >= 5) {
-      button.classList.add("glow-mild");
+    // Remove old classes
+    button.classList.remove("has-progress", "progress-10", "progress-20", "progress-30", "progress-40", "progress-50", "progress-60", "progress-70", "progress-80", "progress-90", "progress-100");
+
+    if (len >= 2) {
+      button.classList.add("has-progress");
+      // Calculate progress as percentage of 45
+      const percent = Math.round((len / 45) * 100);
+      // Round to nearest 10
+      const rounded = Math.min(100, Math.max(10, Math.round(percent / 10) * 10));
+      button.classList.add(`progress-${rounded}`);
     }
   }
 
