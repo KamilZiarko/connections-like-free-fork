@@ -171,7 +171,7 @@
     border-radius: var(--radius);
     border: 1px solid var(--card-border);
     box-shadow: 0 4px 20px var(--shadow);
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: auto;
     max-height: calc(100vh - 110px);
     position: relative;
@@ -214,18 +214,27 @@
 
   #board {
     padding: 10px;
+    padding-top: 0;
   }
 
-  /* Priority lane - horizontal scroll, fixed height */
+  /* Priority lane - sticky at top with horizontal scroll */
   #priority-lane {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 100;
     display: flex;
     flex-wrap: nowrap;
     gap: 8px;
     padding: 10px 12px;
+    margin: 0 -10px;
     overflow-x: auto;
     overflow-y: visible;
-    background: linear-gradient(180deg, var(--bg-accent) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(243, 239, 232, 0.98) 0%, rgba(250, 248, 245, 0.95) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--card-border);
+    box-shadow: 0 2px 8px rgba(60, 50, 40, 0.08);
     min-height: 0;
     scrollbar-width: thin;
     scrollbar-color: #C4B8A8 transparent;
@@ -277,6 +286,7 @@
   table#the_table {
     border-collapse: separate;
     border-spacing: var(--gap);
+    margin: 0 auto;
   }
 
   td.tile-cell {
@@ -979,6 +989,25 @@
 
   // Functions
 
+  function calculateOptimalColumns() {
+    // Get the board wrapper width (the available space)
+    const boardWrapper = document.getElementById("board-wrapper");
+    if (!boardWrapper) return 10; // fallback
+
+    const containerWidth = boardWrapper.clientWidth;
+    // Button width: 90-115px, use max for calculation. Gap: 4px. Add padding: 2 * 10px
+    const buttonWidth = 115;
+    const gap = 4;
+    const padding = 20; // 10px on each side from #board
+
+    const availableWidth = containerWidth - padding;
+    const columnWidth = buttonWidth + gap;
+    const maxColumns = Math.floor(availableWidth / columnWidth);
+
+    // Ensure at least 1 column, max reasonable amount
+    return Math.max(1, Math.min(maxColumns, 30));
+  }
+
   function deselect() {
     if (selected != 0) {
       selected.classList.remove("selected");
@@ -1313,26 +1342,54 @@
     if (!table) {
       return;
     }
-    const cells = [];
     const buttons = [];
+    // Collect all remaining buttons
     for (let i = 0, row; row = table.rows[i]; i++) {
       for (let j = 0, col; col = row.cells[j]; j++) {
         const button = col.firstElementChild;
-        if (!button) {
-          continue;
+        if (button) {
+          buttons.push(button);
         }
-        cells.push(col);
-        buttons.push(button);
       }
     }
     if (buttons.length === 0) {
       return;
     }
+
+    // Shuffle the buttons
     shuffleArray(buttons);
-    for (let i = 0; i < cells.length; i++) {
-      cells[i].innerHTML = "";
-      cells[i].appendChild(buttons[i]);
+
+    // Calculate grid dimensions based on viewport
+    const maxColumns = calculateOptimalColumns();
+    const columns = Math.min(maxColumns, buttons.length);
+    const rows = Math.ceil(buttons.length / columns);
+
+    // Rebuild the table with compact grid
+    const board = document.getElementById("board");
+    board.innerHTML = "";
+    const newTable = document.createElement('table');
+    newTable.id = 'the_table';
+
+    let buttonIndex = 0;
+    for (let i = 0; i < rows; i++) {
+      const tr = document.createElement('tr');
+      tr.classList.add('.row');
+      for (let j = 0; j < columns; j++) {
+        if (buttonIndex < buttons.length) {
+          const td = document.createElement('td');
+          td.className = "tile-cell";
+          td.appendChild(buttons[buttonIndex]);
+          tr.appendChild(td);
+          buttonIndex++;
+        }
+      }
+      if (tr.children.length > 0) {
+        newTable.appendChild(tr);
+      }
     }
+
+    board.appendChild(newTable);
+
     const boardWrapper = document.getElementById("board-wrapper");
     if (boardWrapper) {
       boardWrapper.classList.remove("shuffle-flash");
@@ -1678,10 +1735,17 @@
     var b = document.getElementById("board");
     const table = document.createElement('table');
     table.id = 'the_table';
-    for (let i = 0; i < M; i++) {
+
+    // Calculate columns based on viewport width
+    const maxColumns = calculateOptimalColumns();
+    const totalCells = M * M;
+    const rows = Math.ceil(totalCells / maxColumns);
+
+    let cellIndex = 0;
+    for (let i = 0; i < rows; i++) {
       const tr = document.createElement('tr');
       tr.classList.add('.row');
-      for (let j = 0; j < M; j++) {
+      for (let j = 0; j < maxColumns && cellIndex < totalCells; j++) {
         const td = document.createElement('td');
         td.className = "tile-cell";
         const button = document.createElement('button');
@@ -1689,6 +1753,7 @@
         wireButton(button);
         td.appendChild(button);
         tr.appendChild(td);
+        cellIndex++;
       }
       table.appendChild(tr);
     }
