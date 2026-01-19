@@ -299,8 +299,8 @@
     min-width: 62px;
     max-width: 80px;
     height: 44px;
-    padding: 4px 6px;
-    font-size: 11px;
+    padding: 2px 3px;
+    font-size: 9px;
     font-weight: 500;
     font-family: inherit;
     text-align: center;
@@ -312,9 +312,11 @@
     cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
     z-index: 2;
     -webkit-tap-highlight-color: transparent;
+    line-height: 1.1;
+    word-break: break-word;
   }
 
   button.bigbut:hover {
@@ -568,8 +570,8 @@
       min-width: 52px;
       max-width: 68px;
       height: 38px;
-      font-size: 10px;
-      padding: 3px 4px;
+      font-size: 8px;
+      padding: 2px 3px;
     }
 
     .cluster-item .bigbut {
@@ -1147,55 +1149,21 @@
     }
     score = score + 1;
 
-    // Check if there's already a cluster in priority lane with this category
-    const existingCluster = findExistingClusterInPriority(firstbut.category);
-
-    if (existingCluster && existingCluster !== firstbut && existingCluster !== secondbut) {
-      // Merge both matched items into the existing cluster
-      existingCluster.cluster = existingCluster.cluster.concat(firstbut.cluster).concat(secondbut.cluster);
-      setButtonLabel(existingCluster);
-      existingCluster.classList.add("match-burst");
-      existingCluster.addEventListener("animationend", () => {
-        existingCluster.classList.remove("match-burst");
-      }, { once: true });
-
-      if (existingCluster.cluster.length == 45) {
-        finishCategory(existingCluster);
-      } else {
-        // Trigger priority lane sort and highlight
-        const wrapper = existingCluster.closest(".cluster-item");
-        if (wrapper) {
-          document.querySelectorAll(".cluster-item.recent").forEach(item => {
-            item.classList.remove("recent");
-          });
-          wrapper.classList.add("recent");
-          wrapper.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        }
-        sortPriorityLane();
-        clearSearch();
-        applyFilter();
-      }
-
-      // Remove both matched buttons
-      removeButton(firstbut);
-      removeButton(secondbut);
+    // Always merge into firstbut - no automatic grouping with existing clusters
+    firstbut.cluster = firstbut.cluster.concat(secondbut.cluster);
+    setButtonLabel(firstbut);
+    firstbut.classList.add("match-burst");
+    firstbut.addEventListener("animationend", () => {
+      firstbut.classList.remove("match-burst");
+    }, { once: true });
+    if (firstbut.cluster.length == 45) {
+      finishCategory(firstbut);
     } else {
-      // Normal merge: combine into firstbut
-      firstbut.cluster = firstbut.cluster.concat(secondbut.cluster);
-      setButtonLabel(firstbut);
-      firstbut.classList.add("match-burst");
-      firstbut.addEventListener("animationend", () => {
-        firstbut.classList.remove("match-burst");
-      }, { once: true });
-      if (firstbut.cluster.length == 45) {
-        finishCategory(firstbut);
-      } else {
-        moveClusterToPriority(firstbut);
-        clearSearch();
-        applyFilter();
-      }
-      removeButton(secondbut);
+      moveClusterToPriority(firstbut);
+      clearSearch();
+      applyFilter();
     }
+    removeButton(secondbut);
 
     document.getElementById("score").textContent = score;
     bumpStat("score");
