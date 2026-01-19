@@ -171,10 +171,11 @@
     border-radius: var(--radius);
     border: 1px solid var(--card-border);
     box-shadow: 0 4px 20px var(--shadow);
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     max-height: calc(100vh - 110px);
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Custom scrollbar styling */
@@ -214,20 +215,44 @@
 
   #board {
     padding: 10px;
-    padding-top: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1 1 auto;
   }
 
-  /* Priority lane - sticky at top with horizontal scroll */
+  /* Board scrollbar styling */
+  #board::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  #board::-webkit-scrollbar-track {
+    background: var(--bg-accent);
+    border-radius: 10px;
+  }
+
+  #board::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #D4C8B8 0%, #C4B8A8 100%);
+    border-radius: 10px;
+    border: 2px solid var(--bg-accent);
+  }
+
+  #board::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #C4B8A8 0%, #B4A898 100%);
+  }
+
+  #board {
+    scrollbar-width: thin;
+    scrollbar-color: #C4B8A8 var(--bg-accent);
+  }
+
+  /* Priority lane - fixed at top with horizontal scroll */
   #priority-lane {
-    position: sticky;
-    top: 0;
-    left: 0;
+    flex: 0 0 auto;
     z-index: 100;
     display: flex;
     flex-wrap: nowrap;
     gap: 8px;
     padding: 10px 12px;
-    margin: 0 -10px;
     overflow-x: auto;
     overflow-y: visible;
     background: linear-gradient(180deg, rgba(243, 239, 232, 0.98) 0%, rgba(250, 248, 245, 0.95) 100%);
@@ -271,7 +296,7 @@
 
   .cluster-item:has(.expanded),
   .cluster-item.expanded {
-    z-index: 9998;
+    z-index: 10000;
   }
 
   .cluster-item .bigbut {
@@ -400,12 +425,16 @@
     border-radius: var(--radius-sm);
     padding: 14px 16px;
     box-shadow: 0 12px 32px rgba(60, 50, 40, 0.3);
-    z-index: 10000;
+    z-index: 10001;
     white-space: normal;
     word-wrap: break-word;
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  .cluster-item-line {
+    padding: 2px 0;
   }
 
   .cluster-full::before {
@@ -1170,7 +1199,7 @@
       return;
     }
     const summary = buildClusterSummary(cluster);
-    const full = cluster.join(", ");
+    const full = cluster.map(item => `<div class="cluster-item-line">${item}</div>`).join('');
     button.innerHTML = `<div class="cluster-summary">${summary}</div><div class="cluster-full">${full}</div>`;
     updateButtonSearch(button);
     updateGlowClass(button);
