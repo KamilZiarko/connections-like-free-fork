@@ -1080,6 +1080,9 @@
       if (button.hoverTimer) {
         clearTimeout(button.hoverTimer);
       }
+      if (button.hideTimer) {
+        clearTimeout(button.hideTimer);
+      }
       button.hoverTimer = setTimeout(() => {
         button.classList.add("expanded");
         positionPopover(button);
@@ -1091,9 +1094,14 @@
       if (button.hoverTimer) {
         clearTimeout(button.hoverTimer);
       }
-      button.classList.remove("expanded");
-      const wrapper = button.closest(".cluster-item") || button.closest("td.tile-cell");
-      if (wrapper) wrapper.classList.remove("expanded");
+      if (button.hideTimer) {
+        clearTimeout(button.hideTimer);
+      }
+      button.hideTimer = setTimeout(() => {
+        button.classList.remove("expanded");
+        const wrapper = button.closest(".cluster-item") || button.closest("td.tile-cell");
+        if (wrapper) wrapper.classList.remove("expanded");
+      }, 300);
     });
     button.onclick = function () {
       let didMatch = false;
