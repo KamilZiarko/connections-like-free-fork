@@ -393,6 +393,9 @@
     z-index: 10000;
     white-space: normal;
     word-wrap: break-word;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
   }
 
   .cluster-full::before {
@@ -407,11 +410,16 @@
 
   button.bigbut.expanded {
     z-index: 9998;
+    transform: none !important;
+    box-shadow: 0 4px 12px var(--shadow-hover);
   }
 
   /* Show popover when expanded class is added by JS */
   button.bigbut.expanded .cluster-full {
-    display: block;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto;
   }
 
   /* When popover appears above the button */
@@ -590,11 +598,27 @@
 
   /* Fast, punchy shake - 3 cycles */
   @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-4px); }
-    40% { transform: translateX(4px); }
-    60% { transform: translateX(-3px); }
-    80% { transform: translateX(3px); }
+
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    20% {
+      transform: translateX(-4px);
+    }
+
+    40% {
+      transform: translateX(4px);
+    }
+
+    60% {
+      transform: translateX(-3px);
+    }
+
+    80% {
+      transform: translateX(3px);
+    }
   }
 
   @keyframes slideIn {
@@ -602,6 +626,7 @@
       opacity: 0;
       transform: translateX(-10px) scale(0.95);
     }
+
     to {
       opacity: 1;
       transform: translateX(0) scale(1);
@@ -609,32 +634,69 @@
   }
 
   @keyframes matchPop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.06); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.06);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
   @keyframes scorePop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.15);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
   @keyframes holdFill {
-    from { width: 0%; }
-    to { width: 100%; }
+    from {
+      width: 0%;
+    }
+
+    to {
+      width: 100%;
+    }
   }
 
   @keyframes resetPop {
-    0% { transform: translateX(-50%) scale(1); }
-    50% { transform: translateX(-50%) scale(1.05); }
-    100% { transform: translateX(-50%) scale(1); }
+    0% {
+      transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    100% {
+      transform: translateX(-50%) scale(1);
+    }
   }
 
   @keyframes shuffleFlash {
-    0% { box-shadow: 0 4px 20px var(--shadow); }
-    50% { box-shadow: 0 4px 20px var(--accent-glow), 0 0 30px var(--accent-glow); }
-    100% { box-shadow: 0 4px 20px var(--shadow); }
+    0% {
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+
+    50% {
+      box-shadow: 0 4px 20px var(--accent-glow), 0 0 30px var(--accent-glow);
+    }
+
+    100% {
+      box-shadow: 0 4px 20px var(--shadow);
+    }
   }
 
   /* Match burst - quick and satisfying */
@@ -643,9 +705,20 @@
   }
 
   @keyframes matchBurst {
-    0% { transform: scale(1); box-shadow: 0 2px 4px var(--shadow); }
-    40% { transform: scale(1.1); box-shadow: 0 0 0 4px var(--success-glow), 0 8px 20px var(--shadow-hover); }
-    100% { transform: scale(1); box-shadow: 0 2px 4px var(--shadow); }
+    0% {
+      transform: scale(1);
+      box-shadow: 0 2px 4px var(--shadow);
+    }
+
+    40% {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 4px var(--success-glow), 0 8px 20px var(--shadow-hover);
+    }
+
+    100% {
+      transform: scale(1);
+      box-shadow: 0 2px 4px var(--shadow);
+    }
   }
 
   /* Progress indicator - subtle bar at bottom using green (success) color */
@@ -660,16 +733,45 @@
     transition: width 0.2s ease;
   }
 
-  button.bigbut.progress-10::after { width: 10%; }
-  button.bigbut.progress-20::after { width: 20%; }
-  button.bigbut.progress-30::after { width: 30%; }
-  button.bigbut.progress-40::after { width: 40%; }
-  button.bigbut.progress-50::after { width: 50%; }
-  button.bigbut.progress-60::after { width: 60%; }
-  button.bigbut.progress-70::after { width: 70%; }
-  button.bigbut.progress-80::after { width: 80%; }
-  button.bigbut.progress-90::after { width: 90%; }
-  button.bigbut.progress-100::after { width: 100%; }
+  button.bigbut.progress-10::after {
+    width: 10%;
+  }
+
+  button.bigbut.progress-20::after {
+    width: 20%;
+  }
+
+  button.bigbut.progress-30::after {
+    width: 30%;
+  }
+
+  button.bigbut.progress-40::after {
+    width: 40%;
+  }
+
+  button.bigbut.progress-50::after {
+    width: 50%;
+  }
+
+  button.bigbut.progress-60::after {
+    width: 60%;
+  }
+
+  button.bigbut.progress-70::after {
+    width: 70%;
+  }
+
+  button.bigbut.progress-80::after {
+    width: 80%;
+  }
+
+  button.bigbut.progress-90::after {
+    width: 90%;
+  }
+
+  button.bigbut.progress-100::after {
+    width: 100%;
+  }
 </style>
 
 <body>
@@ -699,7 +801,9 @@
       </div>
     </div>
     <footer class="page-footer">
-      Forked from <a href="https://thomaswc.com/2025.html">thomaswc.com/2025.html</a> with modifications from <a href="https://github.com/vessenes/2025is45x45">vessenes/2025is45x45</a>. All modifications &copy; 2026 Kamil Ziarko, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0 1.0</a>
+      Forked from <a href="https://thomaswc.com/2025.html">thomaswc.com/2025.html</a> with modifications from <a
+        href="https://github.com/vessenes/2025is45x45">vessenes/2025is45x45</a>. All modifications &copy; 2026 Kamil
+      Ziarko, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0 1.0</a>
     </footer>
   </div>
   <div id="reset-indicator">
