@@ -411,7 +411,6 @@
 
   /* Hover popover - appears below using tooltip approach */
   .cluster-full {
-    display: none;
     position: fixed;
     font-size: 11px;
     line-height: 1.6;
@@ -430,6 +429,7 @@
     word-wrap: break-word;
     visibility: hidden;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.2s ease, visibility 0.2s ease;
   }
 
@@ -455,7 +455,6 @@
 
   /* Show popover when expanded class is added by JS */
   button.bigbut.expanded .cluster-full {
-    display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto;
