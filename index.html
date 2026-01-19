@@ -261,6 +261,7 @@
     border-bottom: 1px solid var(--card-border);
     box-shadow: 0 2px 8px rgba(60, 50, 40, 0.08);
     min-height: 0;
+    max-height: 90px;
     scrollbar-width: thin;
     scrollbar-color: #C4B8A8 transparent;
   }
@@ -289,7 +290,6 @@
 
   .cluster-item {
     flex: 0 0 auto;
-    animation: slideIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
     z-index: 1;
   }
@@ -424,7 +424,7 @@
     border-radius: var(--radius-sm);
     padding: 14px 16px;
     box-shadow: 0 12px 32px rgba(60, 50, 40, 0.3);
-    z-index: 10001;
+    z-index: 100000;
     white-space: normal;
     word-wrap: break-word;
     visibility: hidden;
