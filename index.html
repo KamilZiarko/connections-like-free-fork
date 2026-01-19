@@ -171,8 +171,10 @@
     border-radius: var(--radius);
     border: 1px solid var(--card-border);
     box-shadow: 0 4px 20px var(--shadow);
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: auto;
     max-height: calc(100vh - 110px);
+    position: relative;
   }
 
   /* Custom scrollbar styling */
@@ -296,10 +298,10 @@
     justify-content: center;
     gap: 2px;
     width: 100%;
-    min-width: 78px;
-    max-width: 100px;
+    min-width: 90px;
+    max-width: 115px;
     height: 51px;
-    padding: 2px 6px;
+    padding: 2px 8px;
     font-size: 10.5px;
     font-weight: 500;
     font-family: inherit;
@@ -312,11 +314,14 @@
     cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     z-index: 2;
     -webkit-tap-highlight-color: transparent;
     line-height: 1.1;
-    word-break: break-word;
+    word-break: normal;
+    overflow-wrap: normal;
+    -webkit-hyphens: none;
+    hyphens: none;
   }
 
   button.bigbut:hover {
@@ -369,28 +374,23 @@
     font-size: 10px;
   }
 
-  /* Hover popover - appears below */
+  /* Hover popover - appears below using tooltip approach */
   .cluster-full {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.2s ease, opacity 0.2s ease;
-    font-size: 10px;
-    line-height: 1.5;
+    display: none;
+    position: fixed;
+    font-size: 11px;
+    line-height: 1.6;
     color: var(--ink);
-    position: absolute;
-    left: 50%;
-    top: calc(100% + 8px);
-    transform: translateX(-50%);
-    min-width: 200px;
-    max-width: 280px;
+    min-width: 220px;
+    max-width: 320px;
+    max-height: 280px;
+    overflow: auto;
     background: var(--card);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-sm);
-    padding: 0;
-    box-shadow: 0 8px 24px rgba(60, 50, 40, 0.25);
-    z-index: 9999;
-    pointer-events: none;
+    padding: 14px 16px;
+    box-shadow: 0 12px 32px rgba(60, 50, 40, 0.3);
+    z-index: 10000;
     white-space: normal;
     word-wrap: break-word;
   }
@@ -401,7 +401,7 @@
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    border: 6px solid transparent;
+    border: 8px solid transparent;
     border-bottom-color: var(--card);
   }
 
@@ -409,12 +409,17 @@
     z-index: 9998;
   }
 
+  /* Show popover when expanded class is added by JS */
   button.bigbut.expanded .cluster-full {
-    max-height: 250px;
-    opacity: 1;
-    overflow: auto;
-    padding: 12px 14px;
-    pointer-events: auto;
+    display: block;
+  }
+
+  /* When popover appears above the button */
+  .cluster-full.above::before {
+    bottom: auto;
+    top: 100%;
+    border-bottom-color: transparent;
+    border-top-color: var(--card);
   }
 
   /* Custom scrollbar for popover */
@@ -569,16 +574,16 @@
 
   @media (max-width: 600px) {
     button.bigbut {
-      min-width: 66px;
-      max-width: 86px;
+      min-width: 72px;
+      max-width: 92px;
       height: 44px;
       font-size: 9px;
-      padding: 2px 5px;
+      padding: 2px 6px;
     }
 
     .cluster-item .bigbut {
-      min-width: 120px;
-      max-width: 170px;
+      min-width: 130px;
+      max-width: 180px;
       height: 51px;
     }
   }
@@ -877,6 +882,37 @@
     }
   }
 
+  function positionPopover(button) {
+    const popover = button.querySelector('.cluster-full');
+    if (!popover) return;
+
+    const rect = button.getBoundingClientRect();
+    const popoverWidth = 280;
+
+    // Position below the button, centered
+    let left = rect.left + (rect.width / 2) - (popoverWidth / 2);
+    let top = rect.bottom + 10;
+
+    // Keep within viewport horizontally
+    if (left < 10) left = 10;
+    if (left + popoverWidth > window.innerWidth - 10) {
+      left = window.innerWidth - popoverWidth - 10;
+    }
+
+    // If not enough space below, show above
+    if (top + 200 > window.innerHeight) {
+      top = rect.top - 10;
+      popover.style.transform = 'translateY(-100%)';
+      popover.classList.add('above');
+    } else {
+      popover.style.transform = 'none';
+      popover.classList.remove('above');
+    }
+
+    popover.style.left = left + 'px';
+    popover.style.top = top + 'px';
+  }
+
   function wireButton(button) {
     button.addEventListener("mouseenter", () => {
       if (!button.cluster || button.cluster.length <= 1) {
@@ -887,6 +923,7 @@
       }
       button.hoverTimer = setTimeout(() => {
         button.classList.add("expanded");
+        positionPopover(button);
         const wrapper = button.closest(".cluster-item") || button.closest("td.tile-cell");
         if (wrapper) wrapper.classList.add("expanded");
       }, 150);
