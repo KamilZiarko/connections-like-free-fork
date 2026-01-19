@@ -296,10 +296,10 @@
     justify-content: center;
     gap: 2px;
     width: 100%;
-    min-width: 71px;
-    max-width: 92px;
+    min-width: 78px;
+    max-width: 100px;
     height: 51px;
-    padding: 2px 4px;
+    padding: 2px 6px;
     font-size: 10.5px;
     font-weight: 500;
     font-family: inherit;
@@ -377,20 +377,22 @@
     transition: max-height 0.2s ease, opacity 0.2s ease;
     font-size: 10px;
     line-height: 1.5;
-    color: var(--muted);
+    color: var(--ink);
     position: absolute;
     left: 50%;
     top: calc(100% + 8px);
     transform: translateX(-50%);
-    min-width: 180px;
-    max-width: 240px;
+    min-width: 200px;
+    max-width: 280px;
     background: var(--card);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-sm);
     padding: 0;
-    box-shadow: 0 8px 24px rgba(60, 50, 40, 0.2);
+    box-shadow: 0 8px 24px rgba(60, 50, 40, 0.25);
     z-index: 9999;
     pointer-events: none;
+    white-space: normal;
+    word-wrap: break-word;
   }
 
   .cluster-full::before {
@@ -408,10 +410,10 @@
   }
 
   button.bigbut.expanded .cluster-full {
-    max-height: 200px;
+    max-height: 250px;
     opacity: 1;
     overflow: auto;
-    padding: 10px 12px;
+    padding: 12px 14px;
     pointer-events: auto;
   }
 
@@ -567,16 +569,16 @@
 
   @media (max-width: 600px) {
     button.bigbut {
-      min-width: 60px;
-      max-width: 78px;
+      min-width: 66px;
+      max-width: 86px;
       height: 44px;
       font-size: 9px;
-      padding: 2px 3px;
+      padding: 2px 5px;
     }
 
     .cluster-item .bigbut {
-      min-width: 115px;
-      max-width: 161px;
+      min-width: 120px;
+      max-width: 170px;
       height: 51px;
     }
   }
