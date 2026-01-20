@@ -917,7 +917,7 @@
   // 1) Don't penalize already guessed.
 
   // Globals
-  const M = 44;  // Board size (number of categories)
+  const M = 45;  // Board size (number of categories)
 
   var score = 0;
   var mistakes = 0;
@@ -1609,21 +1609,38 @@
 
   function checkCategories() {
     const wordDict = new Map();
+    const duplicates = [];
+    const wrongSize = [];
+
     // Check that each category has 45 entries.
     for (const [key, value] of Object.entries(cats)) {
-      if (value.length < 45) {
-        alert(`Entry for ${key} has length ${value.length}`);
+      if (value.length !== 45) {
+        wrongSize.push(`${key}: ${value.length} words`);
       }
-      for (let i = 0; i < 45; i++) {
-        wordlist.push([value[i], key]);
-        if (wordDict.has(value[i])) {
-          alert(`Duplicate word ${value[i]}`);
+      for (let i = 0; i < value.length; i++) {
+        const word = value[i];
+        if (wordDict.has(word)) {
+          duplicates.push(`"${word}" appears in both "${wordDict.get(word)}" and "${key}"`);
+        } else {
+          wordDict.set(word, key);
         }
-        else {
-          wordDict.set(value[i], true);
-        }
+        wordlist.push([word, key]);
       }
     }
+
+    if (wrongSize.length > 0) {
+      console.error('Categories with wrong size:', wrongSize);
+      alert(`Categories with wrong size:\n${wrongSize.join('\n')}`);
+    }
+
+    if (duplicates.length > 0) {
+      console.error('Duplicate words found:', duplicates);
+      alert(`Duplicate words found:\n${duplicates.join('\n')}`);
+    }
+
+    console.log(`Total categories: ${Object.keys(cats).length}`);
+    console.log(`Total words in wordlist: ${wordlist.length}`);
+    console.log(`Unique words: ${wordDict.size}`);
   }
 
   function shuffleArray(array) {
@@ -1671,8 +1688,16 @@
     document.getElementById("priority-lane").innerHTML = "";
     var currentWordIndex = 0;
     var table = document.getElementById("the_table");
+    console.log(`putWordsInBoard: ${wordlist.length} words available, table has ${table.rows.length} rows`);
+    let cellCount = 0;
     for (let i = 0, row; row = table.rows[i]; i++) {
       for (let j = 0, col; col = row.cells[j]; j++) {
+        cellCount++;
+        if (currentWordIndex >= wordlist.length) {
+          console.error(`Not enough words! Index ${currentWordIndex} but only ${wordlist.length} words available`);
+          console.error(`Cell count: ${cellCount}, Row: ${i}, Col: ${j}`);
+          break;
+        }
         var button = col.firstElementChild;
         // button.pos = currentWordIndex;
         button.textContent = wordlist[currentWordIndex][0];
@@ -1682,6 +1707,7 @@
         currentWordIndex += 1;
       }
     }
+    console.log(`putWordsInBoard: Placed ${currentWordIndex} words into ${cellCount} cells`);
     applyFilter();
   }
 
