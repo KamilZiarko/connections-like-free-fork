@@ -917,7 +917,7 @@
   // 1) Don't penalize already guessed.
 
   // Globals
-  const M = 45;  // Board size
+  const M = 44;  // Board size (number of categories)
 
   var score = 0;
   var mistakes = 0;
@@ -1849,7 +1849,8 @@
 
     // Calculate columns based on viewport width
     const maxColumns = calculateOptimalColumns();
-    const totalCells = M * M;
+    // Calculate total cells based on number of words (44 categories × 45 words = 1980)
+    const totalCells = Object.keys(cats).length * 45;
     const rows = Math.ceil(totalCells / maxColumns);
 
     let cellIndex = 0;
